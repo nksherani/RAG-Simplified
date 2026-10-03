@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Architecture Diagram</title>
+    <!-- Load Mermaid.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #58a6ff;
+            margin-bottom: 8px;
+        }
+        p {
+            color: #8b949e;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .mermaid {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Retrieval-Augmented Generation (RAG) Flow</h1>
+    <p>Visual guide to the Ingestion and Runtime Query pipelines</p>
+
+    <div class="container">
+        <pre class="mermaid">
+flowchart TD
+    %% INGESTION PHASE
+    subgraph Phase1["Phase 1: Ingestion & Indexing (Offline)"]
+        direction TB
+        docs["📄 Raw Knowledge Base (PDFs / Docs)"] --> chunk["✂️ Text Chunking"]
+        chunk --> emb1["🧠 OpenAI Embedding Model"]
+        emb1 --> vdb[("🗄️ Vector Database / Store")]
+    end
+
+    %% RUNTIME PHASE
+    subgraph Phase2["Phase 2: Retrieval & Generation (Runtime)"]
+        direction TB
+        user(["👤 User"]) --> query["❓ Question / Query"]
+        query --> emb2["🧠 OpenAI Embedding Model"]
+        emb2 --> search["🔍 Similarity Search (Cosine)"]
+        vdb -.->|Stored Vectors| search
+        search --> context["📑 Top-K Retrieved Passages"]
+        
+        query --> prompt["📝 Augmented Prompt (Context + Question)"]
+        context --> prompt
+        
+        prompt --> llm["🤖 OpenAI LLM (gpt-4o / gpt-4o-mini)"]
+        llm --> answer["💬 Grounded Response"]
+        answer --> user
+    end
+        </pre>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#161b22',
+                primaryColor: '#1f6feb',
+                primaryTextColor: '#f0f6fc',
+                primaryBorderColor: '#388bfd',
+                lineColor: '#58a6ff',
+                secondaryColor: '#238636',
+                tertiaryColor: '#30363d'
+            }
+        });
+    </script>
+</body>
+</html>
